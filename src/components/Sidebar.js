@@ -14,7 +14,7 @@ const Sidebar = () => {
       <div>
         {/* Clickable Admin Title */}
         <Link to="/" className="block mb-6 text-2xl font-bold text-gray-800 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition">
-          Admin
+          Admin Panel
         </Link>
 
         {/* Navigation Links */}
