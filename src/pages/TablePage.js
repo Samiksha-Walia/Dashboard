@@ -133,130 +133,131 @@ const TablePage = () => {
         </button>
       </div>
 
-      <table className="min-w-full bg-white dark:bg-gray-800">
-        <thead>
-          <tr>
-            <th
-              className="py-2 px-4 border-b cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
-              onClick={() => handleSort('name')}
-            >
-              Name {sortBy === 'name' && (sortAsc ? '↑' : '↓')}
-            </th>
-            <th
-              className="py-2 px-4 border-b cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
-              onClick={() => handleSort('age')}
-            >
-              Age {sortBy === 'age' && (sortAsc ? '↑' : '↓')}
-            </th>
-            <th className="py-2 px-4 border-b">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredData.length > 0 ? (
-            filteredData.map((row, index) => (
-              <tr
-                key={index}
-                className="hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-              >
-                <td className="py-2 px-4 border-b flex items-center gap-2">
-                  {editIndex === index ? (
-                    <>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleEditAvatarChange}
-                        className="p-1"
-                      />
-                      {editUser.avatar && (
-                        <img
-                          src={editUser.avatar}
-                          alt="avatar"
-                          className="w-8 h-8 rounded-full object-cover ml-2"
-                        />
-                      )}
-                      <input
-                        type="text"
-                        value={editUser.name}
-                        onChange={(e) =>
-                          setEditUser({ ...editUser, name: e.target.value })
-                        }
-                        className="p-1 border rounded w-full"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      {row.avatar && (
-                        <img
-                          src={row.avatar}
-                          alt="avatar"
-                          className="w-8 h-8 rounded-full object-cover"
-                        />
-                      )}
-                      {row.name}
-                    </>
-                  )}
-                </td>
-                <td className="py-2 px-4 border-b">
-                  {editIndex === index ? (
-                    <input
-                      type="number"
-                      value={editUser.age}
-                      onChange={(e) =>
-                        setEditUser({ ...editUser, age: e.target.value })
-                      }
-                      className="p-1 border rounded w-full"
-                    />
-                  ) : (
-                    row.age
-                  )}
-                </td>
-                <td className="py-2 px-4 border-b">
-                  {editIndex === index ? (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleSave(index)}
-                        className="px-2 py-1 bg-blue-500 text-white rounded"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={handleCancel}
-                        className="px-2 py-1 bg-gray-400 text-white rounded"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEdit(index)}
-                        className="px-2 py-1 bg-yellow-500 text-white rounded"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(index)}
-                        className="px-2 py-1 bg-red-500 text-white rounded"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td
-                className="py-2 px-4 border-b text-center"
-                colSpan="3"
-              >
-                No users found.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <table className="min-w-full bg-white dark:bg-gray-800 rounded shadow overflow-hidden">
+  <thead className="bg-gray-100 dark:bg-gray-700 text-left">
+    <tr>
+      <th
+        className="py-3 px-6 border-b cursor-pointer w-1/3"
+        onClick={() => handleSort('name')}
+      >
+        Name {sortBy === 'name' && (sortAsc ? '↑' : '↓')}
+      </th>
+      <th
+        className="py-3 px-6 border-b cursor-pointer w-1/6"
+        onClick={() => handleSort('age')}
+      >
+        Age {sortBy === 'age' && (sortAsc ? '↑' : '↓')}
+      </th>
+      <th className="py-3 px-6 border-b w-1/3 text-center">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {filteredData.length > 0 ? (
+      filteredData.map((row, index) => (
+        <tr
+          key={index}
+          className="hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+        >
+          <td className="py-3 px-6 border-b flex items-center gap-3">
+            {editIndex === index ? (
+              <>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleEditAvatarChange}
+                  className="w-28"
+                />
+                {editUser.avatar && (
+                  <img
+                    src={editUser.avatar}
+                    alt="avatar"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                )}
+                <input
+                  type="text"
+                  value={editUser.name}
+                  onChange={(e) =>
+                    setEditUser({ ...editUser, name: e.target.value })
+                  }
+                  className="p-1 border rounded flex-1"
+                />
+              </>
+            ) : (
+              <>
+                {row.avatar && (
+                  <img
+                    src={row.avatar}
+                    alt="avatar"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                )}
+                <span className="font-medium">{row.name}</span>
+              </>
+            )}
+          </td>
+          <td className="py-3 px-6 border-b align-middle">
+            {editIndex === index ? (
+              <input
+                type="number"
+                value={editUser.age}
+                onChange={(e) =>
+                  setEditUser({ ...editUser, age: e.target.value })
+                }
+                className="p-1 border rounded w-full"
+              />
+            ) : (
+              <span>{row.age}</span>
+            )}
+          </td>
+          <td className="py-3 px-6 border-b text-center">
+            {editIndex === index ? (
+              <div className="flex justify-center gap-2">
+                <button
+                  onClick={() => handleSave(index)}
+                  className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="px-3 py-1 bg-gray-400 text-white rounded hover:bg-gray-500"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <div className="flex justify-center gap-2">
+                <button
+                  onClick={() => handleEdit(index)}
+                  className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(index)}
+                  className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Delete
+                </button>
+              </div>
+            )}
+          </td>
+        </tr>
+      ))
+    ) : (
+      <tr>
+        <td
+          className="py-3 px-6 border-b text-center text-gray-500"
+          colSpan="3"
+        >
+          No users found.
+        </td>
+      </tr>
+    )}
+  </tbody>
+</table>
+
     </div>
   );
 };
