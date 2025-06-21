@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import defaultAvatar from '../data/avatar.jpg';
+import defaultAvatar3 from '../data/avatar3.jpg';
+import defaultAvatar4 from '../data/avatar4.jpg';
 
 const initialData = [
-  { name: 'Alice', age: 25 },
-  { name: 'Bob', age: 30 },
-  { name: 'Charlie', age: 28 },
+  { name: 'Alice', age: 25, avatar: defaultAvatar },
+  { name: 'Bob', age: 30, avatar: defaultAvatar3 },
+  { name: 'Charlie', age: 28, avatar: defaultAvatar4 },
 ];
 
 const TablePage = () => {
@@ -11,9 +14,9 @@ const TablePage = () => {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('name');
   const [sortAsc, setSortAsc] = useState(true);
-  const [newUser, setNewUser] = useState({ name: '', age: '' });
+  const [newUser, setNewUser] = useState({ name: '', age: '', avatar: null });
   const [editIndex, setEditIndex] = useState(null);
-  const [editUser, setEditUser] = useState({ name: '', age: '' });
+  const [editUser, setEditUser] = useState({ name: '', age: '', avatar: null });
 
   const handleSort = (key) => {
     if (sortBy === key) {
@@ -21,6 +24,20 @@ const TablePage = () => {
     } else {
       setSortBy(key);
       setSortAsc(true);
+    }
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setNewUser({ ...newUser, avatar: URL.createObjectURL(file) });
+    }
+  };
+
+  const handleEditAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setEditUser({ ...editUser, avatar: URL.createObjectURL(file) });
     }
   };
 
@@ -37,33 +54,48 @@ const TablePage = () => {
 
   const handleAddUser = () => {
     if (!newUser.name.trim() || !newUser.age) return;
-    setData([...data, { name: newUser.name.trim(), age: parseInt(newUser.age) }]);
-    setNewUser({ name: '', age: '' });
+    setData([
+      ...data,
+      {
+        name: newUser.name.trim(),
+        age: parseInt(newUser.age),
+        avatar: newUser.avatar || defaultAvatar,
+      },
+    ]);
+    setNewUser({ name: '', age: '', avatar: null });
   };
 
   const handleEdit = (index) => {
     setEditIndex(index);
-    setEditUser(data[index]);
+    setEditUser({ ...data[index] });
   };
 
   const handleSave = (index) => {
     const updated = [...data];
-    updated[index] = { ...editUser, age: parseInt(editUser.age) };
+    updated[index] = {
+      ...editUser,
+      age: parseInt(editUser.age),
+      avatar: editUser.avatar || defaultAvatar,
+    };
     setData(updated);
     setEditIndex(null);
-    setEditUser({ name: '', age: '' });
+    setEditUser({ name: '', age: '', avatar: null });
   };
 
   const handleCancel = () => {
     setEditIndex(null);
-    setEditUser({ name: '', age: '' });
+    setEditUser({ name: '', age: '', avatar: null });
+  };
+
+  const handleDelete = (index) => {
+    const updated = data.filter((_, i) => i !== index);
+    setData(updated);
   };
 
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">User Table</h1>
 
-      {/* Search */}
       <input
         type="text"
         placeholder="Search by name..."
@@ -72,8 +104,7 @@ const TablePage = () => {
         className="mb-4 p-2 border rounded w-64"
       />
 
-      {/* Add User Form */}
-      <div className="mb-4 flex gap-2">
+      <div className="mb-4 flex flex-wrap gap-2">
         <input
           type="text"
           placeholder="Name"
@@ -88,6 +119,12 @@ const TablePage = () => {
           onChange={(e) => setNewUser({ ...newUser, age: e.target.value })}
           className="p-2 border rounded"
         />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleAvatarChange}
+          className="p-2 border rounded"
+        />
         <button
           onClick={handleAddUser}
           className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
@@ -96,7 +133,6 @@ const TablePage = () => {
         </button>
       </div>
 
-      {/* Table */}
       <table className="min-w-full bg-white dark:bg-gray-800">
         <thead>
           <tr>
@@ -118,19 +154,46 @@ const TablePage = () => {
         <tbody>
           {filteredData.length > 0 ? (
             filteredData.map((row, index) => (
-              <tr key={index}>
-                <td className="py-2 px-4 border-b">
+              <tr
+                key={index}
+                className="hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              >
+                <td className="py-2 px-4 border-b flex items-center gap-2">
                   {editIndex === index ? (
-                    <input
-                      type="text"
-                      value={editUser.name}
-                      onChange={(e) =>
-                        setEditUser({ ...editUser, name: e.target.value })
-                      }
-                      className="p-1 border rounded w-full"
-                    />
+                    <>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleEditAvatarChange}
+                        className="p-1"
+                      />
+                      {editUser.avatar && (
+                        <img
+                          src={editUser.avatar}
+                          alt="avatar"
+                          className="w-8 h-8 rounded-full object-cover ml-2"
+                        />
+                      )}
+                      <input
+                        type="text"
+                        value={editUser.name}
+                        onChange={(e) =>
+                          setEditUser({ ...editUser, name: e.target.value })
+                        }
+                        className="p-1 border rounded w-full"
+                      />
+                    </>
                   ) : (
-                    row.name
+                    <>
+                      {row.avatar && (
+                        <img
+                          src={row.avatar}
+                          alt="avatar"
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                      )}
+                      {row.name}
+                    </>
                   )}
                 </td>
                 <td className="py-2 px-4 border-b">
@@ -164,19 +227,30 @@ const TablePage = () => {
                       </button>
                     </div>
                   ) : (
-                    <button
-                      onClick={() => handleEdit(index)}
-                      className="px-2 py-1 bg-yellow-500 text-white rounded"
-                    >
-                      Edit
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEdit(index)}
+                        className="px-2 py-1 bg-yellow-500 text-white rounded"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(index)}
+                        className="px-2 py-1 bg-red-500 text-white rounded"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td className="py-2 px-4 border-b text-center" colSpan="3">
+              <td
+                className="py-2 px-4 border-b text-center"
+                colSpan="3"
+              >
                 No users found.
               </td>
             </tr>
